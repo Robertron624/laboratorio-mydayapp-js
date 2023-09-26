@@ -10,9 +10,12 @@ const newTodoInputElement = document.querySelector(".header .new-todo");
 
 const mainElement = document.querySelector(".main");
 const footerElement = document.querySelector(".footer");
-// const footerTodoCount = document.querySelector(".footer .todo-count strong");
 
 const ulElement = document.querySelector(".main .todo-list");
+
+const clearAllCompletedTodosButton = document.querySelector(
+  ".footer .clear-completed"
+);
 
 const createTodoElementsFromArray = (todos) => {
   const todoElements = todos.map((todo) => makeTodoElement(todo));
@@ -73,9 +76,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const newTodoTitle = newTodoInputElement.value;
 
+      // prevent script injection
+      const escapedNewTodoTitle = newTodoTitle.replace(/</g, "&lt;");
+
+      // trim() removes whitespace from both ends of a string
+      if (escapedNewTodoTitle.trim() === "") {
+        return;
+      }
+
       const newTodo = {
         id: initialTodos.length + 1,
-        title: newTodoTitle,
+        title: escapedNewTodoTitle,
         completed: false,
       };
 
@@ -97,6 +108,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       newTodoCheckboxElement.addEventListener("change", () => {
         toggleCompleted(`todo-${newTodo.id}`);
+      });
+
+      clearAllCompletedTodosButton.addEventListener("click", () => {
+        clearAllCompletedTodos();
       });
 
       ulElement.appendChild(newTodoElement);
@@ -152,6 +167,14 @@ function updateIncompleteTodosCount() {
   footerTodoCount.innerHTML = `${incompleteTodos.length} <strong>${
     incompleteTodos.length == 1 ? "item" : "items"
   }</strong> left`;
+}
+
+function clearAllCompletedTodos() {
+  const completedTodos = initialTodos.filter((todo) => todo.completed);
+
+  completedTodos.forEach((todo) => {
+    deleteTodoElement(`todo-${todo.id}`);
+  });
 }
 
 // eslint-disable-next-line no-unused-vars
