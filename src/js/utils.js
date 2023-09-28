@@ -49,3 +49,17 @@ export const makeTodoElement = (todo) => {
 
   return todoLiElement;
 };
+
+export function hideTodoElements(todoItems) {
+  todoItems.forEach((todo) => {
+    const todoElement = document.querySelector(`#todo-${todo.id}`);
+    todoElement.style.display = "none";
+  });
+}
+
+export function showTodoElements(todoItems) {
+  todoItems.forEach((todo) => {
+    const todoElement = document.querySelector(`#todo-${todo.id}`);
+    todoElement.style.display = "block";
+  });
+}

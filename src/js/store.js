@@ -1,4 +1,8 @@
-import { makeTodoElement } from "./utils.js";
+import {
+  hideTodoElements,
+  makeTodoElement,
+  showTodoElements,
+} from "./utils.js";
 
 let initialTodos = [
   { id: 1, title: "Learn javascript", completed: true },
@@ -15,6 +19,18 @@ const ulElement = document.querySelector(".main .todo-list");
 
 const clearAllCompletedTodosButton = document.querySelector(
   ".footer .clear-completed"
+);
+
+// Filters elements
+
+const allTodosFilterElement = document.querySelector(".filters .filter.all");
+
+const pendingTodosFilterElement = document.querySelector(
+  ".filters .filter.pending"
+);
+
+const completedTodosFilterElement = document.querySelector(
+  ".filters .filter.completed"
 );
 
 const createTodoElementsFromArray = (todos) => {
@@ -120,6 +136,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
       newTodoInputElement.value = "";
     });
+
+    // Add event listeners to the filters
+
+    allTodosFilterElement.addEventListener("click", () => {
+      setFilteredTodos("all");
+    });
+
+    pendingTodosFilterElement.addEventListener("click", () => {
+      setFilteredTodos("pending");
+    });
+
+    completedTodosFilterElement.addEventListener("click", () => {
+      setFilteredTodos("completed");
+    });
   }
 });
 
@@ -175,6 +205,44 @@ function clearAllCompletedTodos() {
   completedTodos.forEach((todo) => {
     deleteTodoElement(`todo-${todo.id}`);
   });
+}
+
+function setFilteredTodos(filter) {
+  const allFilters = document.querySelectorAll(".filters .filter a");
+
+  allFilters.forEach((filter) => {
+    filter.classList.remove("selected");
+  });
+
+  const pending = initialTodos.filter((todo) => !todo.completed);
+  const completedTodos = initialTodos.filter((todo) => todo.completed);
+
+  if (filter === "pending") {
+    // add class "selected" to the clicked filter a element
+    pendingTodosFilterElement.querySelector("a").classList.add("selected");
+
+    hideTodoElements(completedTodos);
+
+    showTodoElements(pending);
+  } else if (filter === "completed") {
+    // add class "selected" to the clicked filter a element
+    completedTodosFilterElement.querySelector("a").classList.add("selected");
+
+    hideTodoElements(pending);
+
+    showTodoElements(completedTodos);
+  } else if (filter == "all") {
+    // add class "selected" to the clicked filter a element
+    allTodosFilterElement.querySelector("a").classList.add("selected");
+
+    // remoe display none from all todos
+    const todoElements = ulElement.querySelectorAll("li");
+
+    todoElements.forEach((todoElement) => {
+      console.log(todoElement);
+      todoElement.style.display = "block";
+    });
+  }
 }
 
 // eslint-disable-next-line no-unused-vars
