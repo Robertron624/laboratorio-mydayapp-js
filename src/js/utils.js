@@ -63,3 +63,31 @@ export function showTodoElements(todoItems) {
     todoElement.style.display = "block";
   });
 }
+
+export function saveToLocalStorage(todoItems) {
+  localStorage.setItem("todos", JSON.stringify(todoItems));
+}
+
+export function getTodosFromLocalStorage() {
+  const todos = JSON.parse(localStorage.getItem("todos"));
+
+  return todos;
+}
+
+export const createTodoElementsFromArray = (todos) => {
+  const todoElements = todos.map((todo) => makeTodoElement(todo));
+
+  return todoElements;
+};
+
+export function editTodoElement(id, newTitle, todoItems) {
+  const todoElement = document.querySelector(`#todo-${id}`);
+  const todoLabelElement = todoElement.querySelector("label");
+
+  // Update the todo in the todoItems array
+  const todoToUpdate = todoItems.find((todo) => todo.id === id);
+  todoToUpdate.title = newTitle;
+
+  // update the html element
+  todoLabelElement.textContent = newTitle;
+}

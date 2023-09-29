@@ -2,12 +2,16 @@ import {
   hideTodoElements,
   makeTodoElement,
   showTodoElements,
+  saveToLocalStorage,
+  getTodosFromLocalStorage,
+  createTodoElementsFromArray,
 } from "./utils.js";
 
-let initialTodos = [
+let initialMockTodos = [
   { id: 1, title: "Learn javascript", completed: true },
   { id: 2, title: "Buy a unicorn", completed: false },
 ];
+let initialTodos = [];
 
 const newTodoFormElement = document.querySelector(".header .new-todo-form");
 const newTodoInputElement = document.querySelector(".header .new-todo");
@@ -33,17 +37,20 @@ const completedTodosFilterElement = document.querySelector(
   ".filters .filter.completed"
 );
 
-const createTodoElementsFromArray = (todos) => {
-  const todoElements = todos.map((todo) => makeTodoElement(todo));
-
-  return todoElements;
-};
-
-const todoElements = createTodoElementsFromArray(initialTodos);
-
 // When document loads add todoElements to the ul
 
 document.addEventListener("DOMContentLoaded", () => {
+  const todosFromLocalStorage = getTodosFromLocalStorage();
+
+  if (todosFromLocalStorage) {
+    initialTodos = todosFromLocalStorage;
+  } else {
+    console.log("There were no todos in localStorage");
+    initialTodos = initialMockTodos;
+  }
+
+  const todoElements = createTodoElementsFromArray(initialTodos);
+
   const incompleteTodos = initialTodos.filter((todo) => !todo.completed);
 
   if (todoElements.length === 0) {
@@ -244,6 +251,12 @@ function setFilteredTodos(filter) {
     });
   }
 }
+
+// Check when the page is unloaded and save the todos to localStorage
+
+window.addEventListener("beforeunload", () => {
+  saveToLocalStorage(initialTodos);
+});
 
 // eslint-disable-next-line no-unused-vars
 function mutationCallback(mutationsList, observer) {
